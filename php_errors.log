@@ -1,0 +1,7 @@
+[16-Apr-2026 02:45:13 Europe/Berlin] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\TW2\index.php on line 13
+[16-Apr-2026 02:45:13 Europe/Berlin] PHP Warning:  Cannot modify header information - headers already sent in C:\xampp\htdocs\TW2\app\core\helpers.php on line 30
+[16-Apr-2026 02:45:16 Europe/Berlin] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\TW2\index.php on line 13
+[16-Apr-2026 02:45:16 Europe/Berlin] PHP Warning:  session_destroy(): Trying to destroy uninitialized session in C:\xampp\htdocs\TW2\app\controllers\AuthController.php on line 87
+[16-Apr-2026 02:45:16 Europe/Berlin] PHP Warning:  Cannot modify header information - headers already sent in C:\xampp\htdocs\TW2\app\core\Controller.php on line 23
+[16-Apr-2026 02:45:20 Europe/Berlin] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\TW2\index.php on line 13
+[16-Apr-2026 02:45:20 Europe/Berlin] PHP Warning:  Cannot modify header information - headers already sent in C:\xampp\htdocs\TW2\app\core\helpers.php on line 30

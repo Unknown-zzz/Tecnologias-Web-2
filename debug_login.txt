@@ -1,0 +1,256 @@
+Usuario: administrador
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+Password ingresado: 12345
+
+2026-04-16 02:33:49
+Usuario: administrador
+Password ingresado: 12345
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 02:34:44
+Usuario: administrador
+Password ingresado: 12345
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 02:35:27
+Usuario: administrador
+Password ingresado: 12345
+Hash en BD: $2y$10$8Q7v6zL9kP2mX5nB7vR3tY6uI9oP4qW2eR5tY7uI9oP4qW2eR5tY
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 02:35:35
+Usuario: administrador
+Password ingresado: 12345
+Hash en BD: $2y$10$8Q7v6zL9kP2mX5nB7vR3tY6uI9oP4qW2eR5tY7uI9oP4qW2eR5tY
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 02:37:37
+Usuario: administrador
+Password ingresado: 12345
+Hash en BD: $2y$10$Uiu8SK0jMb6Tyr5xKRzVmO3OkDbZEPTP0rTf5a0l8KBpRisrerl6.
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 02:46:42
+Usuario: administrador
+Password ingresado: 12345
+Hash en BD: $2y$10$Uiu8SK0jMb6Tyr5xKRzVmO3OkDbZEPTP0rTf5a0l8KBpRisrerl6.
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 03:26:44
+Usuario: administrador
+Password ingresado: 12345
+Hash en BD: $2y$10$Uiu8SK0jMb6Tyr5xKRzVmO3OkDbZEPTP0rTf5a0l8KBpRisrerl6.
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 17:10:01
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: $2y$10$6irCau0viZTUsuq2wAXpsOZmVONDYNNFCuxQTkZ2YbnsDy49GSPi.
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 17:44:31
+Usuario: cliente
+Password ingresado: 12345
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 17:45:13
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: $2y$10$5FnGy456Fn2BgFDupyuJj.hyEsMNq9hfGDjMLpBA8SuO.GCyLNQtS
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 17:45:41
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: $2y$10$5FnGy456Fn2BgFDupyuJj.hyEsMNq9hfGDjMLpBA8SuO.GCyLNQtS
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 19:49:21
+Usuario: admin
+Password ingresado: 12345
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:50:09
+Usuario: admin
+Password ingresado: 123456789
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:50:16
+Usuario: admin
+Password ingresado: 12345678
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:50:47
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: \.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:50:56
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: \.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:51:00
+Usuario: Jona
+Password ingresado: 12345
+Hash en BD: \.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:51:04
+Usuario: Jona
+Password ingresado: 12345
+Hash en BD: \.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:51:08
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: \.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:51:14
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: \.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:51:18
+Usuario: Jona
+Password ingresado: 12345
+Hash en BD: \.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:53:47
+Usuario: cliente
+Password ingresado: 12345678
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-16 19:55:07
+Usuario: Jonathan
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 19:55:52
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-16 19:58:35
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-17 01:31:22
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-17 02:07:02
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-17 02:07:26
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-17 02:08:25
+Usuario: angel
+Password ingresado: 123456
+Hash en BD: $2y$10$lKdv1eurFkL1qDnnQiLVFur7KBPIWDlFRnDDeTQrSftYMAO5a0QBi
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-17 02:13:59
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-18 01:13:49
+Usuario: Jonathan
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-18 01:25:52
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-18 01:29:31
+Usuario: Jonathan
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-18 01:51:05
+Usuario: Jonathan
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-18 01:55:03
+Usuario: angel
+Password ingresado: 123123
+Hash en BD: $2y$10$lKdv1eurFkL1qDnnQiLVFur7KBPIWDlFRnDDeTQrSftYMAO5a0QBi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-18 01:55:07
+Usuario: angel
+Password ingresado: 123456
+Hash en BD: $2y$10$lKdv1eurFkL1qDnnQiLVFur7KBPIWDlFRnDDeTQrSftYMAO5a0QBi
+password_verify() devuelve: TRUE
+------------------------
+

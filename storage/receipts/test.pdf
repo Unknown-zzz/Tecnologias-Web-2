@@ -1,0 +1,60 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 480 >>
+stream
+BT
+/F1 18 Tf
+50 760 Td
+(NOTA DE VENTA #1) Tj
+0 -28 Td
+/F1 12 Tf
+(Fecha: 2026-04-18 01:08:03) Tj
+0 -18 Td
+(Cliente: Juan Perez Lopez) Tj
+0 -18 Td
+(CI: 12345678) Tj
+0 -18 Td
+(Email: juan@test.com) Tj
+0 -18 Td
+(Direccion: Calle Falsa 123) Tj
+0 -18 Td
+(Telefono: 12345678) Tj
+0 -28 Td
+/F1 12 Tf
+(Detalle de compra:) Tj
+0 -20 Td
+/F1 10 Tf
+(Producto A x2 @ Bs.100.00 = Bs.200.00) Tj
+0 -16 Td
+(Producto B x1 @ Bs.50.00 = Bs.50.00) Tj
+0 -16 Td
+/F1 12 Tf
+0 -24 Td
+(Total: Bs. 250.00) Tj
+ETendstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000771 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+841
+%%EOF
