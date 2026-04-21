@@ -17,6 +17,12 @@ final class Database
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+            
+            // Establecer zona horaria para MySQL
+            if (!empty($config['timezone'])) {
+                $tz = $config['timezone'];
+                self::$instance->exec("SET time_zone = '{$tz}'");
+            }
         }
         return self::$instance;
     }

@@ -9,9 +9,11 @@ return [
         'user' => 'root',
         'pass' => '',
         'charset' => 'utf8mb4',
+        'timezone' => '-04:00',  // UTC-4 para Bolivia (puedes cambiar el offset según tu zona horaria)
     ],
     'app' => [
         'name' => 'Tienda Amiga',
-        'url'  => 'http://localhost/Tecnologia web 2/'
+        'url'  => 'http://192.168.26.5/Tecnologias-Web-2/',
+        'timezone' => 'America/La_Paz',  // Para PHP
     ]
 ];

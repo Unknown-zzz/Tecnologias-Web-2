@@ -14,6 +14,8 @@ abstract class Controller
 
     protected function render(string $view, array $data = []): void
     {
+        // Hacer disponible $db en las vistas
+        $db = $this->db;
         extract($data, EXTR_SKIP);
         require __DIR__ . '/../views/' . $view . '.php';
     }

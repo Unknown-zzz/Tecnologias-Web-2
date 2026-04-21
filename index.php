@@ -11,6 +11,11 @@ session_start();
 
 $config = require __DIR__ . '/config/config.php';
 
+// Establecer zona horaria consistente para toda la aplicación
+if (!empty($config['app']['timezone'])) {
+    date_default_timezone_set($config['app']['timezone']);
+}
+
 require __DIR__ . '/app/core/Database.php';
 require __DIR__ . '/app/core/Controller.php';
 require __DIR__ . '/app/core/helpers.php';
@@ -23,6 +28,7 @@ require __DIR__ . '/app/models/Brand.php';
 require __DIR__ . '/app/models/Industry.php';
 require __DIR__ . '/app/models/Branch.php';
 require __DIR__ . '/app/models/Sale.php';
+require __DIR__ . '/app/models/QrPayment.php';          // ← NUEVO
 
 require __DIR__ . '/app/controllers/AuthController.php';
 require __DIR__ . '/app/controllers/StoreController.php';
@@ -30,17 +36,19 @@ require __DIR__ . '/app/controllers/ProductController.php';
 require __DIR__ . '/app/controllers/CartController.php';
 require __DIR__ . '/app/controllers/CheckoutController.php';
 require __DIR__ . '/app/controllers/AdminController.php';
+require __DIR__ . '/app/controllers/QrPaymentController.php'; // ← NUEVO
 
 $db = Database::getInstance($config['db']);
 
 $route = $_GET['r'] ?? 'home';
 
-$auth    = new AuthController($db, $config);
-$store   = new StoreController($db, $config);
-$product = new ProductController($db, $config);
-$cart    = new CartController($db, $config);
-$checkout= new CheckoutController($db, $config);
-$admin   = new AdminController($db, $config);
+$auth      = new AuthController($db, $config);
+$store     = new StoreController($db, $config);
+$product   = new ProductController($db, $config);
+$cart      = new CartController($db, $config);
+$checkout  = new CheckoutController($db, $config);
+$admin     = new AdminController($db, $config);
+$qrPayment = new QrPaymentController($db, $config);     // ← NUEVO
 
 $routes = [
     'home'                  => [$store, 'index'],
@@ -60,14 +68,21 @@ $routes = [
     'checkout/process'      => [$checkout, 'process'],
     'checkout/success'      => [$checkout, 'success'],
 
+    // ── Pago por QR ── NUEVAS RUTAS ───────────────────────
+    'qr/generate'           => [$qrPayment, 'generate'],  // POST - genera token
+    'qr/status'             => [$qrPayment, 'status'],    // GET  - polling estado
+    'qr/scan'               => [$qrPayment, 'scan'],      // GET  - página del escáner
+    'qr/confirm'            => [$qrPayment, 'confirm'],   // POST - confirmar pago
+    // ──────────────────────────────────────────────────────
+
     'login'                 => [$auth, 'login'],
     'authenticate'          => [$auth, 'authenticate'],
     'register'              => [$auth, 'register'],
     'register/process'      => [$auth, 'registerProcess'],
     'logout'                => [$auth, 'logout'],
 
-    'admin/login'           => [$auth, 'login'],
-    'admin/authenticate'    => [$auth, 'authenticate'],
+    'admin/login'           => [$admin, 'login'],
+    'admin/authenticate'    => [$admin, 'authenticate'],
     'admin/dashboard'       => [$admin, 'dashboard'],
     'admin/products'        => [$admin, 'products'],
     'admin/products/create' => [$admin, 'create'],
@@ -75,32 +90,32 @@ $routes = [
     'admin/products/edit'   => [$admin, 'edit'],
     'admin/products/update' => [$admin, 'update'],
     'admin/products/delete' => [$admin, 'delete'],
-    
+
     'admin/brands'          => [$admin, 'brands'],
     'admin/brands/create'   => [$admin, 'createBrand'],
     'admin/brands/store'    => [$admin, 'storeBrand'],
     'admin/brands/edit'     => [$admin, 'editBrand'],
     'admin/brands/update'   => [$admin, 'updateBrand'],
     'admin/brands/delete'   => [$admin, 'deleteBrand'],
-    
-    'admin/industries'      => [$admin, 'industries'],
+
+    'admin/industries'        => [$admin, 'industries'],
     'admin/industries/create' => [$admin, 'createIndustry'],
     'admin/industries/store'  => [$admin, 'storeIndustry'],
     'admin/industries/edit'   => [$admin, 'editIndustry'],
     'admin/industries/update' => [$admin, 'updateIndustry'],
     'admin/industries/delete' => [$admin, 'deleteIndustry'],
-    
-    'admin/categories'      => [$admin, 'categories'],
+
+    'admin/categories'        => [$admin, 'categories'],
     'admin/categories/create' => [$admin, 'createCategory'],
     'admin/categories/store'  => [$admin, 'storeCategory'],
     'admin/categories/edit'   => [$admin, 'editCategory'],
     'admin/categories/update' => [$admin, 'updateCategory'],
     'admin/categories/delete' => [$admin, 'deleteCategory'],
-    
+
     'admin/sales'            => [$admin, 'sales'],
     'admin/sales/show'       => [$admin, 'showSale'],
-    
-    'admin/logout'          => [$admin, 'logout'],
+
+    'admin/logout'           => [$admin, 'logout'],
 ];
 
 if (!isset($routes[$route])) {

@@ -268,3 +268,31 @@ Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
 password_verify() devuelve: TRUE
 ------------------------
 
+2026-04-21 14:20:21
+Usuario: Jona
+Password ingresado: 123123
+Hash en BD: $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+password_verify() devuelve: FALSE
+------------------------
+
+2026-04-21 14:20:38
+Usuario: Jonathan
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-21 08:36:15
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-21 08:37:06
+Usuario: Jonathan
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
