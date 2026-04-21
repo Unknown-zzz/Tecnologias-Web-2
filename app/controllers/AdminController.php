@@ -54,6 +54,36 @@ final class AdminController extends Controller
         $categories = $categoryModel->all();
         $totalVentas = $saleModel->getTotalVentas();
         $totalIngresos = $saleModel->getTotalIngresos();
+        $salesByMonth = $saleModel->getSalesAndRevenueByMonth(6);
+
+        $productsByCategory = [];
+        $stockByProduct = [];
+        $totalStock = 0;
+
+        foreach ($products as $product) {
+            $categoryName = trim((string)($product['categoria'] ?? 'Sin categoria'));
+            if ($categoryName === '') {
+                $categoryName = 'Sin categoria';
+            }
+
+            $stock = (int)($product['stock'] ?? 0);
+            $totalStock += $stock;
+
+            if (!isset($productsByCategory[$categoryName])) {
+                $productsByCategory[$categoryName] = 0;
+            }
+            $productsByCategory[$categoryName]++;
+
+            $stockByProduct[] = [
+                'nombre' => (string)($product['nombre'] ?? 'Producto'),
+                'stock' => $stock
+            ];
+        }
+
+        usort($stockByProduct, static function (array $a, array $b): int {
+            return $b['stock'] <=> $a['stock'];
+        });
+        $stockByProduct = array_slice($stockByProduct, 0, 8);
 
         $this->render('admin/dashboard/index', [
             'title'         => 'Panel de Administración',
@@ -63,7 +93,13 @@ final class AdminController extends Controller
             'industries'    => $industries ?? [],
             'categories'    => $categories ?? [],
             'totalVentas'   => $totalVentas,
-            'totalIngresos' => $totalIngresos
+            'totalIngresos' => $totalIngresos,
+            'dashboardCharts' => [
+                'salesByMonth' => $salesByMonth,
+                'productsByCategory' => $productsByCategory,
+                'stockByProduct' => $stockByProduct,
+                'totalStock' => $totalStock,
+            ]
         ]);
     }
 
@@ -674,6 +710,6 @@ final class AdminController extends Controller
     public function logout(): void
     {
         session_destroy();
-        $this->redirect('admin/login');
+        $this->redirect('login');
     }
 }

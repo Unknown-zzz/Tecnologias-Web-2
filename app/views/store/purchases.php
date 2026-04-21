@@ -4,7 +4,7 @@
     <div class="row mb-4">
         <div class="col-12 text-center section-title">
             <h1 class="display-4"><i class="bi bi-receipt-cutoff me-3"></i>Mis Compras</h1>
-            <p class="lead text-muted">Consulta tus pedidos realizados y descarga los comprobantes de venta.</p>
+            <p class="lead text-muted">Consulta tus pedidos realizados y descarga tus facturas de compra.</p>
         </div>
     </div>
 
@@ -36,7 +36,7 @@
                                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                                     <?php if (!empty($sale['rutaInforme'])): ?>
                                         <a href="<?= e($sale['rutaInforme']) ?>" class="btn btn-sm btn-primary" download>
-                                            <i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar comprobante
+                                            <i class="bi bi-file-earmark-pdf-fill me-1"></i>Descargar factura
                                         </a>
                                     <?php endif; ?>
                                 </div>

@@ -6,7 +6,8 @@
             <div class="card shadow-lg border-0">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
-                        <i class="bi bi-lock-fill fs-1 text-primary mb-3"></i>
+                        <img src="resources/logo/Logo.webp" alt="Tienda Amiga" class="auth-brand-logo mb-3">
+                        <div class="auth-brand-name mb-2">Tienda Amiga</div>
                         <h2 class="card-title fw-bold">Iniciar Sesión</h2>
                         <p class="text-muted">Ingresa tus credenciales para acceder</p>
                     </div>

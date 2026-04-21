@@ -66,8 +66,8 @@ $routes = [
     'register/process'      => [$auth, 'registerProcess'],
     'logout'                => [$auth, 'logout'],
 
-    'admin/login'           => [$admin, 'login'],
-    'admin/authenticate'    => [$admin, 'authenticate'],
+    'admin/login'           => [$auth, 'login'],
+    'admin/authenticate'    => [$auth, 'authenticate'],
     'admin/dashboard'       => [$admin, 'dashboard'],
     'admin/products'        => [$admin, 'products'],
     'admin/products/create' => [$admin, 'create'],

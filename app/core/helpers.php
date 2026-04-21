@@ -27,7 +27,7 @@ function requireLogin(): void
 function requireAdmin(): void
 {
     if (!isAdmin()) {
-        header('Location: index.php?r=admin/login');
+        header('Location: index.php?r=login');
         exit();
     }
 }

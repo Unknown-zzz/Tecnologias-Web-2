@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= e($title ?? 'Ecommerce Pro') ?></title>
+    <title><?= e($title ?? 'Tienda Amiga') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="resources/styles.css">
@@ -12,8 +12,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="index.php?r=home">
-            <img src="<?= e(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\')) ?>/resources/logo/Logo.png" alt="Ecommerce Pro" class="navbar-logo me-2">
-            <span>Ecommerce Pro</span>
+            <img src="<?= e(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\')) ?>/resources/logo/Logo.webp" alt="Tienda Amiga" class="navbar-logo me-2">
+            <span>Tienda Amiga</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>

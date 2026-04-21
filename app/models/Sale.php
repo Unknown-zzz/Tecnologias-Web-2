@@ -66,8 +66,7 @@ final class Sale
 
     private function buildPdfDocument(array $cliente, int $nroVenta, array $items, float $total): string
     {
-        $title = 'RECIBO DE VENTA #' . $nroVenta;
-        $date = date('Y-m-d H:i:s');
+        $date = date('d/m/Y H:i:s');
         $customerName = trim(($cliente['nombres'] ?? '') . ' ' . ($cliente['apPaterno'] ?? '') . ' ' . ($cliente['apMaterno'] ?? ''));
         $customerEmail = $cliente['correo'] ?? '';
         $customerAddress = $cliente['direccion'] ?? '';
@@ -81,62 +80,122 @@ final class Sale
 
         if ($hasLogo) {
             $streamLines[] = 'q';
-            $streamLines[] = '120 0 0 70 40 980 cm';
+            $streamLines[] = '95 0 0 50 40 770 cm';
             $streamLines[] = '/Im1 Do';
             $streamLines[] = 'Q';
-            $startY = 860;
-        } else {
-            $startY = 980;
         }
 
+        // Encabezado principal
         $streamLines[] = 'BT';
-        $streamLines[] = '/F1 18 Tf';
-        $streamLines[] = '40 ' . $startY . ' Td';
-        $streamLines[] = '(' . $this->escapePdfString($title) . ') Tj';
-        $streamLines[] = '0 -24 Td';
-        $streamLines[] = '/F1 11 Tf';
-        $streamLines[] = '(' . $this->escapePdfString('Ecommerce Pro') . ') Tj';
-        $streamLines[] = '0 -18 Td';
-        $streamLines[] = '(' . $this->escapePdfString('Fecha: ' . $date) . ') Tj';
-        $streamLines[] = '0 -18 Td';
+        $streamLines[] = '/F1 16 Tf';
+        $streamLines[] = '145 795 Td';
+        $streamLines[] = '(' . $this->escapePdfString('E-COMMERCE PRO') . ') Tj';
+        $streamLines[] = '0 -22 Td';
+        $streamLines[] = '/F1 12 Tf';
+        $streamLines[] = '(' . $this->escapePdfString('FACTURA / RECIBO DE VENTA') . ') Tj';
+        $streamLines[] = '0 -16 Td';
+        $streamLines[] = '/F1 10 Tf';
+        $streamLines[] = '(' . $this->escapePdfString('Nro Venta: ' . $nroVenta . '    Fecha: ' . $date) . ') Tj';
+        $streamLines[] = 'ET';
+
+        // Linea separadora
+        $streamLines[] = '2 w';
+        $streamLines[] = '40 742 m';
+        $streamLines[] = '555 742 l';
+        $streamLines[] = 'S';
+
+        // Datos del cliente
+        $streamLines[] = 'BT';
+        $streamLines[] = '/F1 10 Tf';
+        $streamLines[] = '40 724 Td';
         $streamLines[] = '(' . $this->escapePdfString('Cliente: ' . $customerName) . ') Tj';
-        $streamLines[] = '0 -18 Td';
+        $streamLines[] = '0 -15 Td';
         $streamLines[] = '(' . $this->escapePdfString('CI: ' . ($cliente['ciCliente'] ?? '')) . ') Tj';
 
         if ($customerEmail !== '') {
-            $streamLines[] = '0 -18 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Email: ' . $customerEmail) . ') Tj';
-        }
-
-        if ($customerAddress !== '') {
-            $streamLines[] = '0 -18 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Dirección: ' . $customerAddress) . ') Tj';
+            $streamLines[] = '0 -15 Td';
+            $streamLines[] = '(' . $this->escapePdfString('Correo: ' . $customerEmail) . ') Tj';
         }
 
         if ($customerPhone !== '') {
-            $streamLines[] = '0 -18 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Teléfono: ' . $customerPhone) . ') Tj';
+            $streamLines[] = '0 -15 Td';
+            $streamLines[] = '(' . $this->escapePdfString('Telefono: ' . $customerPhone) . ') Tj';
         }
 
-        $streamLines[] = '0 -28 Td';
-        $streamLines[] = '/F1 12 Tf';
-        $streamLines[] = '(' . $this->escapePdfString('Detalle de compra:') . ') Tj';
-        $streamLines[] = '0 -20 Td';
-        $streamLines[] = '/F1 10 Tf';
+        if ($customerAddress !== '') {
+            $streamLines[] = '0 -15 Td';
+            $streamLines[] = '(' . $this->escapePdfString('Direccion: ' . $customerAddress) . ') Tj';
+        }
+        $streamLines[] = 'ET';
 
+        // Cabecera de tabla
+        $streamLines[] = '1 w';
+        $streamLines[] = '40 642 m';
+        $streamLines[] = '555 642 l';
+        $streamLines[] = 'S';
+        $streamLines[] = '40 620 m';
+        $streamLines[] = '555 620 l';
+        $streamLines[] = 'S';
+
+        $streamLines[] = 'BT';
+        $streamLines[] = '/F1 10 Tf';
+        $streamLines[] = '45 628 Td';
+        $streamLines[] = '(' . $this->escapePdfString('Producto') . ') Tj';
+        $streamLines[] = '260 0 Td';
+        $streamLines[] = '(' . $this->escapePdfString('Cant.') . ') Tj';
+        $streamLines[] = '70 0 Td';
+        $streamLines[] = '(' . $this->escapePdfString('P.Unit') . ') Tj';
+        $streamLines[] = '90 0 Td';
+        $streamLines[] = '(' . $this->escapePdfString('Subtotal') . ') Tj';
+        $streamLines[] = 'ET';
+
+        // Filas de detalle
+        $y = 606;
         foreach ($items as $item) {
+            if ($y < 120) {
+                break;
+            }
+
             $productName = $item['product']['nombre'] ?? 'Producto';
             $quantity = (int)($item['cantidad'] ?? 0);
             $unitPrice = number_format((float)($item['product']['precio'] ?? 0), 2, '.', ',');
             $subtotal = number_format((float)($item['subtotal'] ?? ($quantity * (float)($item['product']['precio'] ?? 0))), 2, '.', ',');
-            $line = sprintf('%s x%d @ Bs.%s = Bs.%s', $productName, $quantity, $unitPrice, $subtotal);
-            $streamLines[] = '(' . $this->escapePdfString($line) . ') Tj';
-            $streamLines[] = '0 -16 Td';
+            $shortName = $this->truncateText($productName, 40);
+
+            $streamLines[] = 'BT';
+            $streamLines[] = '/F1 9 Tf';
+            $streamLines[] = '45 ' . $y . ' Td';
+            $streamLines[] = '(' . $this->escapePdfString($shortName) . ') Tj';
+            $streamLines[] = '265 0 Td';
+            $streamLines[] = '(' . $this->escapePdfString((string)$quantity) . ') Tj';
+            $streamLines[] = '65 0 Td';
+            $streamLines[] = '(' . $this->escapePdfString('Bs. ' . $unitPrice) . ') Tj';
+            $streamLines[] = '85 0 Td';
+            $streamLines[] = '(' . $this->escapePdfString('Bs. ' . $subtotal) . ') Tj';
+            $streamLines[] = 'ET';
+
+            $streamLines[] = '0.3 w';
+            $streamLines[] = '40 ' . ($y - 6) . ' m';
+            $streamLines[] = '555 ' . ($y - 6) . ' l';
+            $streamLines[] = 'S';
+
+            $y -= 20;
         }
 
+        // Total final
+        $streamLines[] = 'BT';
         $streamLines[] = '/F1 12 Tf';
-        $streamLines[] = '0 -24 Td';
+        $streamLines[] = '380 ' . ($y - 18) . ' Td';
         $streamLines[] = '(' . $this->escapePdfString('TOTAL: Bs. ' . number_format($total, 2, '.', ',')) . ') Tj';
+        $streamLines[] = 'ET';
+
+        // Pie simple
+        $streamLines[] = 'BT';
+        $streamLines[] = '/F1 9 Tf';
+        $streamLines[] = '40 60 Td';
+        $streamLines[] = '(' . $this->escapePdfString('Gracias por su compra.') . ') Tj';
+        $streamLines[] = '0 -12 Td';
+        $streamLines[] = '(' . $this->escapePdfString('Este documento es un comprobante de venta generado por el sistema.') . ') Tj';
         $streamLines[] = 'ET';
 
         $stream = implode("\n", $streamLines);
@@ -151,7 +210,7 @@ final class Sale
         }
 
         $pageResources .= ' >>';
-        $objects[3] = "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 420 1080] /Contents 4 0 R /Resources " . $pageResources . " >>\nendobj\n";
+        $objects[3] = "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources " . $pageResources . " >>\nendobj\n";
         $objects[4] = "4 0 obj\n<< /Length " . strlen($stream) . " >>\nstream\n" . $stream . "endstream\nendobj\n";
         $objects[5] = "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n";
 
@@ -373,6 +432,26 @@ final class Sale
         return $result;
     }
 
+    private function truncateText(string $text, int $maxChars): string
+    {
+        if ($maxChars <= 0) {
+            return '';
+        }
+
+        if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+            if (mb_strlen($text) <= $maxChars) {
+                return $text;
+            }
+            return rtrim(mb_substr($text, 0, max(1, $maxChars - 3))) . '...';
+        }
+
+        if (strlen($text) <= $maxChars) {
+            return $text;
+        }
+
+        return rtrim(substr($text, 0, max(1, $maxChars - 3))) . '...';
+    }
+
     private function escapePdfString(string $text): string
     {
         $text = $this->normalizeTextForPdf($text);
@@ -477,5 +556,43 @@ final class Sale
         $stmt->execute();
         $result = $stmt->fetch();
         return (float)($result['total'] ?? 0);
+    }
+
+    public function getSalesAndRevenueByMonth(int $limit = 6): array
+    {
+        $safeLimit = max(1, min($limit, 24));
+
+        $sql = "SELECT DATE_FORMAT(nv.fecha, '%Y-%m') AS periodo, " .
+               "COUNT(DISTINCT nv.nro) AS ventas, " .
+               "COALESCE(SUM(dnv.cant * dnv.precioUnitario), 0) AS ingresos " .
+               "FROM NotaVenta nv " .
+               "LEFT JOIN DetalleNotaVenta dnv ON dnv.nroNotaVenta = nv.nro " .
+               "GROUP BY DATE_FORMAT(nv.fecha, '%Y-%m') " .
+               "ORDER BY periodo DESC " .
+               "LIMIT " . $safeLimit;
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+
+        $rows = array_reverse($rows);
+
+        return array_map(static function (array $row): array {
+            $label = (string)($row['periodo'] ?? '');
+            if (preg_match('/^(\d{4})-(\d{2})$/', $label, $match)) {
+                $monthNames = [
+                    '01' => 'Ene', '02' => 'Feb', '03' => 'Mar', '04' => 'Abr',
+                    '05' => 'May', '06' => 'Jun', '07' => 'Jul', '08' => 'Ago',
+                    '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dic'
+                ];
+                $label = ($monthNames[$match[2]] ?? $match[2]) . ' ' . $match[1];
+            }
+
+            return [
+                'periodo' => $label,
+                'ventas' => (int)($row['ventas'] ?? 0),
+                'ingresos' => (float)($row['ingresos'] ?? 0),
+            ];
+        }, $rows);
     }
 }

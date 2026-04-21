@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($title ?? 'Administracion - Tienda MVC') ?></title>
+    <title><?= e($title ?? 'Administracion - Tienda Amiga') ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/TW2/resources/admin-styles.css">
+    <link rel="stylesheet" href="resources/admin-styles.css">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
         <div class="d-flex align-items-center">
             <a class="navbar-brand me-3" href="index.php?r=admin/dashboard">
-                <i class="bi bi-speedometer2 me-2"></i>Admin Panel
+                <img src="resources/logo/Logo.webp" alt="Tienda Amiga" class="admin-navbar-logo me-2">Tienda Amiga Admin
             </a>
             <span class="text-white-50 small d-none d-lg-inline">Gestión centralizada de productos, ventas y catálogo</span>
         </div>
@@ -47,7 +47,7 @@
                         </a>
                     </li>
                 <?php else: ?>
-                    <li class="nav-item"><a class="nav-link" href="index.php?r=admin/login"><i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?r=login"><i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?r=home"><i class="bi bi-browser-safari me-1"></i>Ver Tienda</a></li>
                 <?php endif; ?>
             </ul>

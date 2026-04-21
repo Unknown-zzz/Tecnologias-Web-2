@@ -1,13 +1,17 @@
 /* Global theme variables */
 :root {
-    --primary: #0d6efd;
-    --secondary: #6c757d;
-    --success: #198754;
+    --primary: #1f2f6a;
+    --secondary: #3a4f8c;
+    --success: #1d8f5f;
     --danger: #dc3545;
-    --warning: #ffc107;
-    --dark: #212529;
-    --light: #f8f9fa;
-    --bg: #f1f5f9;
+    --warning: #f3dc21;
+    --dark: #192241;
+    --light: #fffef7;
+    --bg: #fff9c7;
+    --amiga-yellow: #f3dc21;
+    --amiga-yellow-soft: #fff3a6;
+    --amiga-blue: #1f2f6a;
+    --amiga-blue-soft: #2f468d;
     --card-radius: 1rem;
     --box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
     --box-shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.08);
@@ -25,7 +29,7 @@ html, body {
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--bg);
+    background: radial-gradient(circle at top right, #fff3a6 0%, #fff9c7 45%, #fffef7 100%);
     color: var(--dark);
 }
 
@@ -43,8 +47,8 @@ a:hover {
 }
 
 .navbar {
-    background-color: #212529 !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(90deg, var(--amiga-blue) 0%, var(--amiga-blue-soft) 100%) !important;
+    box-shadow: 0 6px 24px rgba(28, 43, 100, 0.28);
     padding: 0.85rem 0;
 }
 
@@ -63,13 +67,13 @@ a:hover {
 
 .navbar .nav-link:hover,
 .navbar .nav-link.active {
-    color: #fff !important;
+    color: #ffe764 !important;
 }
 
 .navbar-logo {
-    width: 34px;
-    height: auto;
-    border-radius: 0.35rem;
+    width: auto;
+    height: 42px;
+    max-height: 42px;
     object-fit: contain;
 }
 
@@ -116,8 +120,8 @@ a:hover {
 }
 
 .btn-primary:hover {
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
+    background-color: #16214a;
+    border-color: #16214a;
     color: #fff;
 }
 
@@ -151,14 +155,62 @@ a:hover {
 }
 
 .btn-gradient {
-    background: linear-gradient(135deg, #394361 0%, #1f2937 100%);
-    color: #fff;
-    border: none;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    background: linear-gradient(135deg, #f3dc21 0%, #f9e84f 100%);
+    color: #1c2b64;
+    border: 1px solid rgba(28, 43, 100, 0.25);
+    box-shadow: 0 12px 30px rgba(243, 220, 33, 0.28);
 }
 
 .btn-gradient:hover {
-    background: linear-gradient(135deg, #4b5672 0%, #27304a 100%);
+    background: linear-gradient(135deg, #f7e755 0%, #ffef7a 100%);
+    color: #1c2b64;
+}
+
+.btn-outline-primary {
+    color: var(--amiga-blue);
+    border-color: var(--amiga-blue);
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: var(--amiga-blue);
+    border-color: var(--amiga-blue);
+}
+
+.bg-primary {
+    background-color: var(--amiga-blue) !important;
+}
+
+.badge.bg-primary {
+    background-color: var(--amiga-blue) !important;
+}
+
+.alert-info {
+    background-color: #fff8cc;
+    border-color: #f0dc58;
+    color: #3a3a22;
+}
+
+.auth-brand-logo {
+    width: 180px;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+.auth-brand-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1c2b64;
+    letter-spacing: 0.4px;
+}
+
+.footer-amiga {
+    background: linear-gradient(90deg, var(--amiga-blue) 0%, var(--amiga-blue-soft) 100%);
     color: #fff;
 }
 

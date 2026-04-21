@@ -11,7 +11,7 @@
                         </div>
                         <div>
                             <h1 class="h2 mb-1">¡Compra Exitosa!</h1>
-                            <p class="mb-0 text-muted">Tu pedido fue procesado y el comprobante está listo para descargar.</p>
+                            <p class="mb-0 text-muted">Tu pedido fue procesado y la factura está lista para descargar.</p>
                         </div>
                     </div>
 
@@ -66,11 +66,11 @@
                     <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
                         <?php if (!empty($sale['rutaInforme'])): ?>
                             <a href="<?= e($sale['rutaInforme']) ?>" class="btn btn-primary btn-lg" download>
-                                <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar PDF del pedido
+                                <i class="bi bi-file-earmark-pdf-fill me-2"></i>Descargar factura PDF
                             </a>
                         <?php else: ?>
                             <div class="alert alert-warning mb-0">
-                                El comprobante sigue procesándose. Si no se genera el PDF automáticamente, contacta con soporte.
+                                La factura sigue procesándose. Si no se genera el PDF automáticamente, contacta con soporte.
                             </div>
                         <?php endif; ?>
 
