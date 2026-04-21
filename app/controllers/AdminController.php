@@ -153,7 +153,15 @@ final class AdminController extends Controller
         }
 
         $productModel = new Product($this->db);
-        $uploadedImage = $this->handleProductImageUpload($_FILES['imagen'] ?? null);
+        
+        // Procesar imagen solo si se sube una
+        $imagenParaGuardar = '';
+        if (!empty($_FILES['imagen']['tmp_name'])) {
+            $uploadedImage = $this->handleProductImageUpload($_FILES['imagen']);
+            if ($uploadedImage) {
+                $imagenParaGuardar = $uploadedImage;
+            }
+        }
         
         $data = [
             'nombre' => trim($_POST['nombre'] ?? ''),
@@ -164,7 +172,7 @@ final class AdminController extends Controller
             'codIndustria' => (int)($_POST['codIndustria'] ?? 1),
             'codCategoria' => (int)($_POST['codCategoria'] ?? 1),
             'stock' => (int)($_POST['stock'] ?? 0),
-            'imagen' => $uploadedImage ?? ''
+            'imagen' => $imagenParaGuardar
         ];
 
         if ($productModel->create($data)) {
@@ -227,7 +235,19 @@ final class AdminController extends Controller
             $this->redirect('admin/products');
         }
 
-        $uploadedImage = $this->handleProductImageUpload($_FILES['imagen'] ?? null);
+        // Determinar qué imagen usar
+        $imagenParaGuardar = $product['imagen']; // Usar la actual por defecto
+        
+        // Si se sube una nueva imagen, procesarla
+        if (!empty($_FILES['imagen']['tmp_name'])) {
+            $uploadedImage = $this->handleProductImageUpload($_FILES['imagen']);
+            if ($uploadedImage) {
+                $imagenParaGuardar = $uploadedImage;
+                // Opcionalmente, eliminar la imagen anterior
+                $this->deleteProductImage($product['imagen']);
+            }
+        }
+        
         $data = [
             'nombre' => trim($_POST['nombre'] ?? ''),
             'descripcion' => trim($_POST['descripcion'] ?? ''),
@@ -236,8 +256,7 @@ final class AdminController extends Controller
             'codMarca' => (int)($_POST['codMarca'] ?? 1),
             'codIndustria' => (int)($_POST['codIndustria'] ?? 1),
             'codCategoria' => (int)($_POST['codCategoria'] ?? 1),
-            'imagen_actual' => $product['imagen'],
-            'imagen' => $uploadedImage ?? ($_POST['imagen_actual'] ?? $product['imagen'])
+            'imagen' => $imagenParaGuardar
         ];
 
         if ($productModel->update($cod, $data)) {
@@ -289,7 +308,23 @@ final class AdminController extends Controller
             return null;
         }
 
+        // Retornar SOLO el nombre del archivo, no la ruta
         return $filename;
+    }
+
+    private function deleteProductImage(?string $imageName): bool
+    {
+        if (empty($imageName)) {
+            return true;
+        }
+
+        $imagePath = __DIR__ . '/../../resources/imagenes/' . basename($imageName);
+        
+        if (is_file($imagePath)) {
+            return @unlink($imagePath);
+        }
+
+        return true;
     }
 
     public function delete(): void

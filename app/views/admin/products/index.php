@@ -130,7 +130,6 @@
                     <div class="form-group">
                         <label for="productImagen" class="form-label">Imagen del producto</label>
                         <input type="file" class="form-control-file" id="productImagen" name="imagen" accept="image/*">
-                        <input type="hidden" name="imagen_actual" id="productImagenActual" value="">
                         <small id="productImagenInfo" class="form-text text-muted">Selecciona un archivo para subir. Si editas y no seleccionas uno, se mantiene la imagen actual.</small>
                     </div>
 
@@ -186,16 +185,16 @@ function editProduct(cod, nombre, descripcion, precio, stock, imagen, marca, ind
     document.getElementById('productDescripcion').value = descripcion;
     document.getElementById('productPrecio').value = precio;
     document.getElementById('productStock').value = stock;
-    document.getElementById('productImagenActual').value = imagen;
     document.getElementById('productMarca').value = marca;
     document.getElementById('productIndustria').value = industria;
     document.getElementById('productCategoria').value = categoria;
+    document.getElementById('productImagen').value = ''; // Limpiar el input de archivo
     document.getElementById('productSubmitBtn').textContent = 'Actualizar Producto';
     document.getElementById('productForm').action = 'index.php?r=admin/products/update';
 
     var imageInfo = document.getElementById('productImagenInfo');
     if (imageInfo) {
-        imageInfo.textContent = imagen ? 'Imagen actual: ' + imagen + '. Deja vacío para conservarla.' : 'No hay imagen actual. Selecciona un archivo para subir.';
+        imageInfo.textContent = imagen ? 'Imagen actual: ' + imagen + '. Selecciona un archivo para cambiarla.' : 'No hay imagen actual. Selecciona un archivo para subir.';
     }
 
     $('#productModal').modal('show');
@@ -206,7 +205,6 @@ $('#productModal').on('hidden.bs.modal', function () {
     document.getElementById('productForm').reset();
     document.getElementById('productModalLabel').textContent = 'Agregar nuevo producto';
     document.getElementById('productCod').value = '';
-    document.getElementById('productImagenActual').value = '';
     var imageInfo = document.getElementById('productImagenInfo');
     if (imageInfo) {
         imageInfo.textContent = 'Selecciona un archivo para subir. Si editas y no seleccionas uno, se mantiene la imagen actual.';

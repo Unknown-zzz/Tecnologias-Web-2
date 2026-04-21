@@ -114,7 +114,7 @@ SQL
             'nombre' => trim($data['nombre']),
             'descripcion' => trim($data['descripcion']),
             'precio' => (float)$data['precio'],
-            'imagen' => $data['imagen'] ?? $data['imagen_actual'] ?? '',
+            'imagen' => $data['imagen'] ?? '',
             'estado' => $data['estado'] ?? 'activo',
             'codMarca' => (int)$data['codMarca'],
             'codIndustria' => (int)$data['codIndustria'],
