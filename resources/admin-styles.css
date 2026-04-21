@@ -519,6 +519,53 @@ textarea.form-control {
     padding: 2rem;
 }
 
+.admin-dashboard {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.admin-dashboard .section-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.quick-actions .btn {
+    border-width: 2px;
+    font-weight: 600;
+}
+
+.chart-box {
+    position: relative;
+    width: 100%;
+}
+
+.chart-box-md {
+    min-height: 300px;
+}
+
+.chart-box-lg {
+    min-height: 340px;
+}
+
+.chart-box-sm {
+    min-height: 280px;
+}
+
+.admin-dashboard canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.admin-dashboard .summary-card-header small {
+    color: rgba(255, 255, 255, 0.85);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .section-header {
@@ -560,5 +607,19 @@ textarea.form-control {
 
     .modal-dialog {
         margin: 0.5rem;
+    }
+
+    .container-fluid {
+        padding: 1rem;
+    }
+
+    .admin-dashboard .section-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .chart-box-md,
+    .chart-box-lg,
+    .chart-box-sm {
+        min-height: 260px;
     }
 }

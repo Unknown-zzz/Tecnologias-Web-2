@@ -12,9 +12,21 @@ $salesByMonth = $chartData['salesByMonth'] ?? [];
 $productsByCategory = $chartData['productsByCategory'] ?? [];
 $stockByProduct = $chartData['stockByProduct'] ?? [];
 $totalStock = (int)($chartData['totalStock'] ?? 0);
+
+$dashboardOverview = [
+    'productos' => count($products ?? []),
+    'marcas' => count($brands ?? []),
+    'industrias' => count($industries ?? []),
+    'categorias' => count($categories ?? []),
+];
+
+$financeSummary = [
+    'ventas' => (int)($totalVentas ?? 0),
+    'ingresos' => (float)($totalIngresos ?? 0),
+];
 ?>
 
-<div class="container-fluid">
+<div class="container-fluid admin-dashboard">
     <!-- Header con bienvenida -->
     <div class="section-header mt-3">
         <div>
@@ -24,131 +36,37 @@ $totalStock = (int)($chartData['totalStock'] ?? 0);
         <a href="index.php?r=admin/logout" class="btn btn-danger"><i class="bi bi-box-arrow-right mr-1"></i>Cerrar Sesión</a>
     </div>
 
-    <!-- Dashboard Cards -->
-    <div class="row mb-4">
-        <div class="col-md-6 col-lg-3">
-            <div class="dashboard-card">
-                <div class="card-body">
-                    <div class="dashboard-icon"><i class="bi bi-box-seam"></i></div>
-                    <h5 class="card-title">Productos</h5>
-                    <p class="card-text text-muted">Gestiona tu catálogo completo.</p>
-                    <a href="index.php?r=admin/products" class="btn btn-primary btn-sm">Ver Productos</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="dashboard-card">
-                <div class="card-body">
-                    <div class="dashboard-icon"><i class="bi bi-tags"></i></div>
-                    <h5 class="card-title">Marcas</h5>
-                    <p class="card-text text-muted">Administra marcas disponibles.</p>
-                    <a href="index.php?r=admin/brands" class="btn btn-primary btn-sm">Ver Marcas</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="dashboard-card">
-                <div class="card-body">
-                    <div class="dashboard-icon"><i class="bi bi-building"></i></div>
-                    <h5 class="card-title">Industrias</h5>
-                    <p class="card-text text-muted">Gestiona industrias.</p>
-                    <a href="index.php?r=admin/industries" class="btn btn-primary btn-sm">Ver Industrias</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="dashboard-card">
-                <div class="card-body">
-                    <div class="dashboard-icon"><i class="bi bi-folder"></i></div>
-                    <h5 class="card-title">Categorías</h5>
-                    <p class="card-text text-muted">Organiza categorías.</p>
-                    <a href="index.php?r=admin/categories" class="btn btn-primary btn-sm">Ver Categorías</a>
-                </div>
-            </div>
-        </div>
+    <div class="quick-actions mb-4">
+        <a href="index.php?r=admin/products" class="btn btn-outline-primary btn-sm"><i class="bi bi-box-seam mr-1"></i>Productos</a>
+        <a href="index.php?r=admin/brands" class="btn btn-outline-primary btn-sm"><i class="bi bi-tags mr-1"></i>Marcas</a>
+        <a href="index.php?r=admin/industries" class="btn btn-outline-primary btn-sm"><i class="bi bi-building mr-1"></i>Industrias</a>
+        <a href="index.php?r=admin/categories" class="btn btn-outline-primary btn-sm"><i class="bi bi-folder mr-1"></i>Categorias</a>
+        <a href="index.php?r=admin/sales" class="btn btn-outline-primary btn-sm"><i class="bi bi-receipt mr-1"></i>Ventas</a>
     </div>
 
-    <!-- Resumen Rápido -->
+    <!-- Resumen visual con Chart.js -->
     <div class="row mt-4">
-        <div class="col-md-12">
+        <div class="col-lg-8 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header summary-card-header">
-                    <h5 class="mb-0">Resumen Estadístico del Sistema</h5>
+                    <h5 class="mb-0"><i class="bi bi-bar-chart mr-2"></i>Resumen General del Sistema</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="summary-item">
-                                <span class="summary-icon"><i class="bi bi-box-seam"></i></span>
-                                <div>
-                                    <h4><?= count($products) ?></h4>
-                                    <p>Productos activos</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="summary-item">
-                                <span class="summary-icon"><i class="bi bi-tags"></i></span>
-                                <div>
-                                    <h4><?= count($brands ?? []) ?></h4>
-                                    <p>Marcas registradas</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="summary-item">
-                                <span class="summary-icon"><i class="bi bi-building"></i></span>
-                                <div>
-                                    <h4><?= count($industries ?? []) ?></h4>
-                                    <p>Industrias configuradas</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="summary-item">
-                                <span class="summary-icon"><i class="bi bi-folder"></i></span>
-                                <div>
-                                    <h4><?= count($categories ?? []) ?></h4>
-                                    <p>Categorías creadas</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="chart-box chart-box-md">
+                        <canvas id="overviewChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Resumen de Ingresos -->
-    <div class="row mt-4">
-        <div class="col-md-12">
+        <div class="col-lg-4 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header summary-card-header">
-                    <h5 class="mb-0"><i class="bi bi-cash-stack mr-2"></i>Resumen de Ingresos</h5>
+                    <h5 class="mb-0"><i class="bi bi-cash-stack mr-2"></i>Resumen de Ventas e Ingresos</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="summary-item">
-                                <span class="summary-icon"><i class="bi bi-receipt"></i></span>
-                                <div>
-                                    <h4><?= number_format($totalVentas) ?></h4>
-                                    <p>Total de Ventas</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="summary-item">
-                                <span class="summary-icon"><i class="bi bi-currency-dollar"></i></span>
-                                <div>
-                                    <h4>Bs. <?= number_format($totalIngresos, 2) ?></h4>
-                                    <p>Ingresos Totales</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="chart-box chart-box-md">
+                        <canvas id="financeChart"></canvas>
                     </div>
                     <div class="text-center mt-3">
                         <a href="index.php?r=admin/sales" class="btn btn-secondary">
@@ -166,10 +84,12 @@ $totalStock = (int)($chartData['totalStock'] ?? 0);
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header summary-card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-graph-up-arrow mr-2"></i>Ingresos y Ventas (Ultimos meses)</h5>
-                    <small class="text-muted">Bs. y cantidad</small>
+                    <small class="text-light">Bs. y cantidad</small>
                 </div>
                 <div class="card-body">
-                    <canvas id="salesRevenueChart" height="120"></canvas>
+                    <div class="chart-box chart-box-lg">
+                        <canvas id="salesRevenueChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -180,7 +100,9 @@ $totalStock = (int)($chartData['totalStock'] ?? 0);
                     <h5 class="mb-0"><i class="bi bi-pie-chart mr-2"></i>Productos por Categoría</h5>
                 </div>
                 <div class="card-body d-flex align-items-center">
-                    <canvas id="categoryChart" height="220"></canvas>
+                    <div class="chart-box chart-box-md w-100">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -191,20 +113,13 @@ $totalStock = (int)($chartData['totalStock'] ?? 0);
             <div class="card border-0 shadow-sm">
                 <div class="card-header summary-card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-bar-chart-line mr-2"></i>Top Stock por Producto</h5>
-                    <small class="text-muted">Stock total actual: <?= number_format($totalStock) ?></small>
+                    <small class="text-light">Stock total actual: <?= number_format($totalStock) ?></small>
                 </div>
                 <div class="card-body">
-                    <canvas id="stockChart" height="95"></canvas>
+                    <div class="chart-box chart-box-sm">
+                        <canvas id="stockChart"></canvas>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Información adicional -->
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="alert alert-info border-left-info text-center">
-                <small><strong>Consejo:</strong> Utiliza los botones "Agregar" en cada sección para crear nuevos elementos rápidamente desde ventanas emergentes.</small>
             </div>
         </div>
     </div>
@@ -216,6 +131,8 @@ $totalStock = (int)($chartData['totalStock'] ?? 0);
     const salesByMonth = <?= json_encode($salesByMonth, JSON_UNESCAPED_UNICODE) ?>;
     const productsByCategory = <?= json_encode($productsByCategory, JSON_UNESCAPED_UNICODE) ?>;
     const stockByProduct = <?= json_encode($stockByProduct, JSON_UNESCAPED_UNICODE) ?>;
+    const dashboardOverview = <?= json_encode($dashboardOverview, JSON_UNESCAPED_UNICODE) ?>;
+    const financeSummary = <?= json_encode($financeSummary, JSON_UNESCAPED_UNICODE) ?>;
 
     const currencyFormatter = (value) => {
         const n = Number(value || 0);
@@ -229,6 +146,85 @@ $totalStock = (int)($chartData['totalStock'] ?? 0);
         if (!parent) return;
         parent.innerHTML = '<div class="text-center text-muted py-5">' + message + '</div>';
     };
+
+    const overviewLabels = ['Productos', 'Marcas', 'Industrias', 'Categorias'];
+    const overviewValues = [
+        Number(dashboardOverview.productos || 0),
+        Number(dashboardOverview.marcas || 0),
+        Number(dashboardOverview.industrias || 0),
+        Number(dashboardOverview.categorias || 0)
+    ];
+
+    if (overviewValues.some(value => value > 0)) {
+        const overviewCtx = document.getElementById('overviewChart');
+        new Chart(overviewCtx, {
+            type: 'bar',
+            data: {
+                labels: overviewLabels,
+                datasets: [{
+                    label: 'Cantidad',
+                    data: overviewValues,
+                    backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444'],
+                    borderRadius: 8,
+                    maxBarThickness: 54
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                }
+            }
+        });
+    } else {
+        safeMessage('overviewChart', 'No hay datos del sistema para mostrar en el resumen.');
+    }
+
+    const financeValues = [
+        Number(financeSummary.ventas || 0),
+        Number(financeSummary.ingresos || 0)
+    ];
+
+    if (financeValues.some(value => value > 0)) {
+        const financeCtx = document.getElementById('financeChart');
+        new Chart(financeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Total Ventas', 'Ingresos Totales (Bs.)'],
+                datasets: [{
+                    data: financeValues,
+                    backgroundColor: ['#1d4ed8', '#10b981'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (context.dataIndex === 1) {
+                                    return context.label + ': ' + currencyFormatter(context.raw);
+                                }
+                                return context.label + ': ' + Number(context.raw || 0).toLocaleString('es-BO');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        safeMessage('financeChart', 'No hay ventas ni ingresos acumulados para graficar.');
+    }
 
     if (salesByMonth.length > 0) {
         const salesCtx = document.getElementById('salesRevenueChart');
