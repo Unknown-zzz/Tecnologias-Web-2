@@ -6,11 +6,15 @@ final class StoreController extends Controller
     public function index(): void
     {
         $productModel = new Product($this->db);
+        $saleModel = new Sale($this->db);
+        
         $products = $productModel->allActive();
+        $topProducts = $saleModel->getTopProductos(7);
 
         $this->render('store/index', [
             'title' => 'Tienda en Línea',
-            'products' => $products
+            'products' => $products,
+            'topProducts' => $topProducts
         ]);
     }
 

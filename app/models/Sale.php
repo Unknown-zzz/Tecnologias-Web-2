@@ -595,4 +595,11 @@ final class Sale
             ];
         }, $rows);
     }
+
+    public function getTopProductos(int $limite = 7): array
+    {
+        $stmt = $this->db->prepare("CALL sp_productos_top_vendidos(:limite)");
+        $stmt->execute(['limite' => max(1, min($limite, 50))]);
+        return $stmt->fetchAll();
+    }
 }

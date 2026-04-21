@@ -36,54 +36,80 @@ $financeSummary = [
         <a href="index.php?r=admin/logout" class="btn btn-danger"><i class="bi bi-box-arrow-right mr-1"></i>Cerrar Sesión</a>
     </div>
 
-    <div class="quick-actions mb-4">
+    <!-- KPI Cards - Resumen Rápido -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm dashboard-kpi-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Total Productos</p>
+                            <h3 class="mb-0 text-primary"><?= number_format($dashboardOverview['productos'] ?? 0) ?></h3>
+                        </div>
+                        <i class="bi bi-box-seam fs-3 text-primary opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm dashboard-kpi-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Total Marcas</p>
+                            <h3 class="mb-0 text-success"><?= number_format($dashboardOverview['marcas'] ?? 0) ?></h3>
+                        </div>
+                        <i class="bi bi-tags fs-3 text-success opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm dashboard-kpi-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Total Ventas</p>
+                            <h3 class="mb-0 text-warning"><?= number_format($financeSummary['ventas'] ?? 0) ?></h3>
+                        </div>
+                        <i class="bi bi-receipt fs-3 text-warning opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm dashboard-kpi-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="text-muted small mb-1">Ingresos Totales</p>
+                            <h3 class="mb-0 text-info">Bs. <?= number_format((float)($financeSummary['ingresos'] ?? 0), 2) ?></h3>
+                        </div>
+                        <i class="bi bi-cash-stack fs-3 text-info opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="quick-actions mb-4 d-flex gap-2 flex-wrap">
         <a href="index.php?r=admin/products" class="btn btn-outline-primary btn-sm"><i class="bi bi-box-seam mr-1"></i>Productos</a>
         <a href="index.php?r=admin/brands" class="btn btn-outline-primary btn-sm"><i class="bi bi-tags mr-1"></i>Marcas</a>
         <a href="index.php?r=admin/industries" class="btn btn-outline-primary btn-sm"><i class="bi bi-building mr-1"></i>Industrias</a>
-        <a href="index.php?r=admin/categories" class="btn btn-outline-primary btn-sm"><i class="bi bi-folder mr-1"></i>Categorias</a>
+        <a href="index.php?r=admin/categories" class="btn btn-outline-primary btn-sm"><i class="bi bi-folder mr-1"></i>Categorías</a>
         <a href="index.php?r=admin/sales" class="btn btn-outline-primary btn-sm"><i class="bi bi-receipt mr-1"></i>Ventas</a>
     </div>
 
-    <!-- Resumen visual con Chart.js -->
+    <!-- Gráficos principales -->
     <div class="row mt-4">
         <div class="col-lg-8 mb-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header summary-card-header">
-                    <h5 class="mb-0"><i class="bi bi-bar-chart mr-2"></i>Resumen General del Sistema</h5>
-                </div>
-                <div class="card-body">
-                    <div class="chart-box chart-box-md">
-                        <canvas id="overviewChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header summary-card-header">
-                    <h5 class="mb-0"><i class="bi bi-cash-stack mr-2"></i>Resumen de Ventas e Ingresos</h5>
-                </div>
-                <div class="card-body">
-                    <div class="chart-box chart-box-md">
-                        <canvas id="financeChart"></canvas>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="index.php?r=admin/sales" class="btn btn-secondary">
-                            <i class="bi bi-eye mr-1"></i>Ver Todas las Ventas
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Graficos Chart.js -->
-    <div class="row mt-4">
-        <div class="col-lg-8 mb-4">
-            <div class="card border-0 shadow-sm h-100">
                 <div class="card-header summary-card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-graph-up-arrow mr-2"></i>Ingresos y Ventas (Ultimos meses)</h5>
+                    <h5 class="mb-0"><i class="bi bi-graph-up-arrow mr-2"></i>Ingresos y Ventas (Últimos Meses)</h5>
                     <small class="text-light">Bs. y cantidad</small>
                 </div>
                 <div class="card-body">
@@ -108,21 +134,36 @@ $financeSummary = [
         </div>
     </div>
 
-    <div class="row mt-1">
-        <div class="col-12 mb-4">
+    <!-- Gráficos secundarios -->
+    <div class="row mt-4">
+        <div class="col-lg-8 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header summary-card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-bar-chart-line mr-2"></i>Top Stock por Producto</h5>
                     <small class="text-light">Stock total actual: <?= number_format($totalStock) ?></small>
                 </div>
                 <div class="card-body">
-                    <div class="chart-box chart-box-sm">
+                    <div class="chart-box chart-box-md">
                         <canvas id="stockChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header summary-card-header">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart mr-2"></i>Resumen General</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-box chart-box-md">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -185,45 +226,6 @@ $financeSummary = [
         });
     } else {
         safeMessage('overviewChart', 'No hay datos del sistema para mostrar en el resumen.');
-    }
-
-    const financeValues = [
-        Number(financeSummary.ventas || 0),
-        Number(financeSummary.ingresos || 0)
-    ];
-
-    if (financeValues.some(value => value > 0)) {
-        const financeCtx = document.getElementById('financeChart');
-        new Chart(financeCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Total Ventas', 'Ingresos Totales (Bs.)'],
-                datasets: [{
-                    data: financeValues,
-                    backgroundColor: ['#1d4ed8', '#10b981'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                if (context.dataIndex === 1) {
-                                    return context.label + ': ' + currencyFormatter(context.raw);
-                                }
-                                return context.label + ': ' + Number(context.raw || 0).toLocaleString('es-BO');
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    } else {
-        safeMessage('financeChart', 'No hay ventas ni ingresos acumulados para graficar.');
     }
 
     if (salesByMonth.length > 0) {

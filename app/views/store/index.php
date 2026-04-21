@@ -8,6 +8,81 @@
         </div>
     </div>
 
+    <!-- Carrusel de Productos Más Vendidos -->
+    <?php if (!empty($topProducts)): ?>
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0"><i class="bi bi-star-fill text-warning me-2"></i>Productos Más Vendidos</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="topProductsCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <?php foreach (array_chunk($topProducts, 4) as $index => $chunk): ?>
+                            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                                <div class="row g-4 p-4">
+                                    <?php foreach ($chunk as $product): ?>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card h-100 top-product-card">
+                                            <?php if (!empty($product['imagen'])): ?>
+                                                <img src="resources/imagenes/<?= e($product['imagen']) ?>"
+                                                     class="card-img-top top-product-image" alt="<?= e($product['nombre']) ?>">
+                                            <?php else: ?>
+                                                <div class="top-product-image-placeholder">
+                                                    <i class="bi bi-image fs-1"></i>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div class="card-body d-flex flex-column">
+                                                <div class="badge bg-success mb-2 align-self-start">
+                                                    <i class="bi bi-fire me-1"></i><?= (int)($product['total_vendidos'] ?? 0) ?> vendidos
+                                                </div>
+                                                <h5 class="card-title mb-2"><?= e($product['nombre']) ?></h5>
+                                                <div class="mb-2">
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-tag me-1"></i><?= e($product['categoria']) ?>
+                                                    </small>
+                                                </div>
+                                                <p class="card-text flex-grow-1 small text-muted">
+                                                    <?= strlen($product['descripcion'] ?? '') > 80 ? substr(e($product['descripcion']), 0, 80) . '...' : e($product['descripcion'] ?? '') ?>
+                                                </p>
+                                                <div class="mt-auto">
+                                                    <strong class="fs-5 text-primary d-block mb-2">Bs. <?= number_format((float)($product['precio'] ?? 0), 2) ?></strong>
+                                                    <?php if (!empty($product['stock']) && $product['stock'] > 0): ?>
+                                                        <button class="btn btn-success btn-sm w-100 add-to-cart" data-id="<?= (int)$product['cod'] ?>" data-name="<?= e($product['nombre']) ?>">
+                                                            <i class="bi bi-cart-plus me-1"></i>Agregar
+                                                        </button>
+                                                    <?php else: ?>
+                                                        <button class="btn btn-secondary btn-sm w-100" disabled>
+                                                            <i class="bi bi-x-circle me-1"></i>Agotado
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php if (count(array_chunk($topProducts, 4)) > 1): ?>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#topProductsCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#topProductsCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <div class="row g-4">
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $p): ?>

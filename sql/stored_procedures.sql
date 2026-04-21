@@ -393,4 +393,33 @@ BEGIN
     FROM DetalleNotaVenta dnv;
 END//
 
+-- ========== PROCEDIMIENTOS PARA PRODUCTOS MÁS VENDIDOS ==========
+
+DROP PROCEDURE IF EXISTS sp_productos_top_vendidos//
+CREATE PROCEDURE sp_productos_top_vendidos(IN p_limite INT)
+BEGIN
+    SELECT 
+        p.cod,
+        p.nombre,
+        p.descripcion,
+        p.precio,
+        p.imagen,
+        m.nombre AS marca,
+        cat.nombre AS categoria,
+        i.nombre AS industria,
+        COALESCE(dps.stock, 0) AS stock,
+        COALESCE(SUM(dnv.cant), 0) AS total_vendidos,
+        COALESCE(SUM(dnv.cant * dnv.precioUnitario), 0) AS ingresos_totales
+    FROM Producto p
+    LEFT JOIN Marca m ON p.codMarca = m.cod
+    LEFT JOIN Categoria cat ON p.codCategoria = cat.cod
+    LEFT JOIN Industria i ON p.codIndustria = i.cod
+    LEFT JOIN DetalleProductoSucursal dps ON p.cod = dps.codProducto AND dps.codSucursal = 1
+    LEFT JOIN DetalleNotaVenta dnv ON p.cod = dnv.codProducto
+    WHERE p.estado = 'activo'
+    GROUP BY p.cod, p.nombre, p.descripcion, p.precio, p.imagen, m.nombre, cat.nombre, i.nombre, dps.stock
+    ORDER BY total_vendidos DESC, ingresos_totales DESC
+    LIMIT p_limite;
+END//
+
 DELIMITER ;
