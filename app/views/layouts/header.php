@@ -112,6 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.classList.add('btn-success');
                         this.innerHTML = originalText;
                     }, 2000);
+                } else if (response.status === 409) {
+                    alert('No puedes agregar mas unidades. Ya alcanzaste el stock disponible.');
                 }
             } catch (error) {
                 console.error('Error adding to cart:', error);
@@ -163,6 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (response.ok) {
                         await updateBadge();
                         await loadCartContent();
+                    } else if (response.status === 409) {
+                        alert('No puedes superar el stock disponible para este producto.');
                     } else {
                         console.error('Error response:', response.status);
                     }

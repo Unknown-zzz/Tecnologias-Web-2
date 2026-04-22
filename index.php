@@ -4,10 +4,15 @@ declare(strict_types=1);
 // === CONFIGURACIÓN DE ERRORES (solo para desarrollo) ===
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
 // NO poner ningún echo, espacio en blanco ni texto antes de session_start()
 session_start();
+
+$autoload = __DIR__ . '/vendor/autoload.php';
+if (is_file($autoload)) {
+    require_once $autoload;
+}
 
 $config = require __DIR__ . '/config/config.php';
 

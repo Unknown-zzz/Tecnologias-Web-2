@@ -19,6 +19,7 @@
                                             </thead>
                                             <tbody class="bg-light">
                                                 <?php foreach ($items as $row): ?>
+                                                    <?php $stock = (int)($row['product']['stock'] ?? 0); ?>
                                                     <tr class="table-row-hover">
                                                         <td class="ps-4 py-3">
                                                             <div class="d-flex align-items-center">
@@ -44,12 +45,21 @@
                                                                     <i class="bi bi-dash"></i>
                                                                 </a>
                                                                 <span class="cart-qty-value shadow-sm"><?= (int)$row['cantidad'] ?></span>
-                                                                <a href="index.php?r=cart/quantity&id=<?= (int)$row['product']['cod'] ?>&op=inc"
-                                                                   class="cart-qty-btn shadow-sm"
-                                                                   data-cart-action="quantity" data-op="inc" data-id="<?= (int)$row['product']['cod'] ?>">
-                                                                    <i class="bi bi-plus"></i>
-                                                                </a>
+                                                                <?php if ($stock > 0 && (int)$row['cantidad'] < $stock): ?>
+                                                                    <a href="index.php?r=cart/quantity&id=<?= (int)$row['product']['cod'] ?>&op=inc"
+                                                                       class="cart-qty-btn shadow-sm"
+                                                                       data-cart-action="quantity" data-op="inc" data-id="<?= (int)$row['product']['cod'] ?>">
+                                                                        <i class="bi bi-plus"></i>
+                                                                    </a>
+                                                                <?php else: ?>
+                                                                    <span class="cart-qty-btn shadow-sm disabled" title="Stock máximo alcanzado">
+                                                                        <i class="bi bi-plus"></i>
+                                                                    </span>
+                                                                <?php endif; ?>
                                                             </div>
+                                                            <?php if ($stock > 0): ?>
+                                                                <small class="text-muted d-block mt-1">Stock disponible: <?= $stock ?></small>
+                                                            <?php endif; ?>
                                                         </td>
                                                         <td class="text-center fw-semibold py-3 price-tag">Bs. <?= number_format((float)$row['product']['precio'], 2) ?></td>
                                                         <td class="text-center fw-semibold py-3 price-tag">Bs. <?= number_format((float)$row['subtotal'], 2) ?></td>

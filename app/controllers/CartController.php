@@ -3,10 +3,39 @@ declare(strict_types=1);
 
 final class CartController extends Controller
 {
+    private function syncCartWithStock(Product $productModel): void
+    {
+        $_SESSION['carrito'] ??= [];
+
+        foreach ($_SESSION['carrito'] as $index => $item) {
+            $productId = (int)($item['id'] ?? 0);
+            $quantity = max(1, (int)($item['cantidad'] ?? 1));
+
+            $product = $productModel->find($productId);
+            if ($product === null) {
+                unset($_SESSION['carrito'][$index]);
+                continue;
+            }
+
+            $stock = $productModel->getStock($productId);
+            if ($stock <= 0) {
+                unset($_SESSION['carrito'][$index]);
+                continue;
+            }
+
+            if ($quantity > $stock) {
+                $_SESSION['carrito'][$index]['cantidad'] = $stock;
+            }
+        }
+
+        $_SESSION['carrito'] = array_values($_SESSION['carrito']);
+    }
+
     public function index(): void
     {
         $_SESSION['carrito'] ??= [];
         $productModel = new Product($this->db);
+        $this->syncCartWithStock($productModel);
         $items = [];
         $total = 0.0;
 
@@ -15,6 +44,7 @@ final class CartController extends Controller
             if ($product === null) continue;
 
             $qty = (int)$item['cantidad'];
+            $product['stock'] = $productModel->getStock((int)$item['id']);
             $subtotal = (float)$product['precio'] * $qty;
             $total += $subtotal;
 
@@ -36,6 +66,7 @@ final class CartController extends Controller
     {
         $_SESSION['carrito'] ??= [];
         $productModel = new Product($this->db);
+        $this->syncCartWithStock($productModel);
         $items = [];
         $total = 0.0;
 
@@ -44,6 +75,7 @@ final class CartController extends Controller
             if ($product === null) continue;
 
             $qty = (int)$item['cantidad'];
+            $product['stock'] = $productModel->getStock((int)$item['id']);
             $subtotal = (float)$product['precio'] * $qty;
             $total += $subtotal;
 
@@ -69,6 +101,7 @@ final class CartController extends Controller
     public function add(): void
     {
         $_SESSION['carrito'] ??= [];
+        $productModel = new Product($this->db);
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id <= 0) {
             if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
@@ -78,9 +111,40 @@ final class CartController extends Controller
             $this->redirect('cart');
         }
 
+        $product = $productModel->find($id);
+        if ($product === null) {
+            if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
+                http_response_code(404);
+                echo 'NOT_FOUND';
+                return;
+            }
+            $this->redirect('cart');
+        }
+
+        $stock = $productModel->getStock($id);
+        if ($stock <= 0) {
+            if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
+                http_response_code(409);
+                echo 'OUT_OF_STOCK';
+                return;
+            }
+            $_SESSION['flash_error'] = 'No hay stock disponible para este producto.';
+            $this->redirect('cart');
+        }
+
         $found = false;
         foreach ($_SESSION['carrito'] as &$item) {
             if ((int)$item['id'] === $id) {
+                if ((int)$item['cantidad'] >= $stock) {
+                    if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
+                        http_response_code(409);
+                        echo 'STOCK_LIMIT';
+                        return;
+                    }
+                    $_SESSION['flash_error'] = 'No puedes agregar mas unidades de las disponibles en stock.';
+                    $this->redirect('cart');
+                }
+
                 $item['cantidad']++;
                 $found = true;
                 break;
@@ -121,6 +185,7 @@ final class CartController extends Controller
     public function quantity(): void
     {
         $_SESSION['carrito'] ??= [];
+        $productModel = new Product($this->db);
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $op = $_GET['op'] ?? '';
 
@@ -135,7 +200,23 @@ final class CartController extends Controller
         foreach ($_SESSION['carrito'] as $index => &$item) {
             if ((int)$item['id'] !== $id) continue;
 
+            $stock = $productModel->getStock($id);
+            if ($stock <= 0) {
+                unset($_SESSION['carrito'][$index]);
+                break;
+            }
+
             if ($op === 'inc') {
+                if ((int)$item['cantidad'] >= $stock) {
+                    if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
+                        http_response_code(409);
+                        echo 'STOCK_LIMIT';
+                        return;
+                    }
+                    $_SESSION['flash_error'] = 'No puedes superar el stock disponible.';
+                    $this->redirect('cart');
+                }
+
                 $item['cantidad']++;
             } elseif ($op === 'dec') {
                 $item['cantidad']--;

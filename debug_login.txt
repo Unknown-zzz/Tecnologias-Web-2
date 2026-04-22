@@ -324,3 +324,17 @@ Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
 password_verify() devuelve: TRUE
 ------------------------
 
+2026-04-21 19:42:06
+Usuario: admin
+Password ingresado: 123123
+Hash en BD: $2y$10$JUA3u5jHv4tejyJ/E2RaIeghU07tuQ2pGsJgbuZ7ur4llnTaAYVG6
+password_verify() devuelve: TRUE
+------------------------
+
+2026-04-21 20:08:16
+Usuario: angel
+Password ingresado: 123456
+Hash en BD: $2y$12$xzo9V44TDeck7hcT9T9IuOfUw8qKOlaexspEcQNFw/xCHszFfcQgK
+password_verify() devuelve: TRUE
+------------------------
+

@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 final class Sale
 {
     public function __construct(private PDO $db) {}
@@ -60,415 +63,125 @@ final class Sale
 
     public function generateInvoicePdf(array $cliente, int $nroVenta, array $items, float $total, string $savePath): bool
     {
-        $content = $this->buildPdfDocument($cliente, $nroVenta, $items, $total);
-        return file_put_contents($savePath, $content) !== false;
+        if (!class_exists(Dompdf::class)) {
+            error_log('Dompdf no esta disponible. Ejecuta: composer install');
+            return false;
+        }
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('defaultFont', 'DejaVu Sans');
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($this->buildInvoiceHtml($cliente, $nroVenta, $items, $total), 'UTF-8');
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return file_put_contents($savePath, $dompdf->output()) !== false;
     }
 
-    private function buildPdfDocument(array $cliente, int $nroVenta, array $items, float $total): string
+    private function buildInvoiceHtml(array $cliente, int $nroVenta, array $items, float $total): string
     {
         $date = date('d/m/Y H:i:s');
         $customerName = trim(($cliente['nombres'] ?? '') . ' ' . ($cliente['apPaterno'] ?? '') . ' ' . ($cliente['apMaterno'] ?? ''));
-        $customerEmail = $cliente['correo'] ?? '';
-        $customerAddress = $cliente['direccion'] ?? '';
-        $customerPhone = $cliente['nroCelular'] ?? '';
 
-        $logoPath = __DIR__ . '/../../resources/logo/LogoInvertido.png';
-        $logoObject = $this->buildPdfLogoImageObject($logoPath);
-        $hasLogo = $logoObject !== null;
-
-        $streamLines = [];
-
-        if ($hasLogo) {
-            $streamLines[] = 'q';
-            $streamLines[] = '95 0 0 50 40 770 cm';
-            $streamLines[] = '/Im1 Do';
-            $streamLines[] = 'Q';
-        }
-
-        // Encabezado principal
-        $streamLines[] = 'BT';
-        $streamLines[] = '/F1 16 Tf';
-        $streamLines[] = '145 795 Td';
-        $streamLines[] = '(' . $this->escapePdfString('E-COMMERCE PRO') . ') Tj';
-        $streamLines[] = '0 -22 Td';
-        $streamLines[] = '/F1 12 Tf';
-        $streamLines[] = '(' . $this->escapePdfString('FACTURA / RECIBO DE VENTA') . ') Tj';
-        $streamLines[] = '0 -16 Td';
-        $streamLines[] = '/F1 10 Tf';
-        $streamLines[] = '(' . $this->escapePdfString('Nro Venta: ' . $nroVenta . '    Fecha: ' . $date) . ') Tj';
-        $streamLines[] = 'ET';
-
-        // Linea separadora
-        $streamLines[] = '2 w';
-        $streamLines[] = '40 742 m';
-        $streamLines[] = '555 742 l';
-        $streamLines[] = 'S';
-
-        // Datos del cliente
-        $streamLines[] = 'BT';
-        $streamLines[] = '/F1 10 Tf';
-        $streamLines[] = '40 724 Td';
-        $streamLines[] = '(' . $this->escapePdfString('Cliente: ' . $customerName) . ') Tj';
-        $streamLines[] = '0 -15 Td';
-        $streamLines[] = '(' . $this->escapePdfString('CI: ' . ($cliente['ciCliente'] ?? '')) . ') Tj';
-
-        if ($customerEmail !== '') {
-            $streamLines[] = '0 -15 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Correo: ' . $customerEmail) . ') Tj';
-        }
-
-        if ($customerPhone !== '') {
-            $streamLines[] = '0 -15 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Telefono: ' . $customerPhone) . ') Tj';
-        }
-
-        if ($customerAddress !== '') {
-            $streamLines[] = '0 -15 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Direccion: ' . $customerAddress) . ') Tj';
-        }
-        $streamLines[] = 'ET';
-
-        // Cabecera de tabla
-        $streamLines[] = '1 w';
-        $streamLines[] = '40 642 m';
-        $streamLines[] = '555 642 l';
-        $streamLines[] = 'S';
-        $streamLines[] = '40 620 m';
-        $streamLines[] = '555 620 l';
-        $streamLines[] = 'S';
-
-        $streamLines[] = 'BT';
-        $streamLines[] = '/F1 10 Tf';
-        $streamLines[] = '45 628 Td';
-        $streamLines[] = '(' . $this->escapePdfString('Producto') . ') Tj';
-        $streamLines[] = '260 0 Td';
-        $streamLines[] = '(' . $this->escapePdfString('Cant.') . ') Tj';
-        $streamLines[] = '70 0 Td';
-        $streamLines[] = '(' . $this->escapePdfString('P.Unit') . ') Tj';
-        $streamLines[] = '90 0 Td';
-        $streamLines[] = '(' . $this->escapePdfString('Subtotal') . ') Tj';
-        $streamLines[] = 'ET';
-
-        // Filas de detalle
-        $y = 606;
+        $rowsHtml = '';
         foreach ($items as $item) {
-            if ($y < 120) {
-                break;
-            }
-
-            $productName = $item['product']['nombre'] ?? 'Producto';
+            $productName = (string)($item['product']['nombre'] ?? 'Producto');
             $quantity = (int)($item['cantidad'] ?? 0);
             $unitPrice = number_format((float)($item['product']['precio'] ?? 0), 2, '.', ',');
             $subtotal = number_format((float)($item['subtotal'] ?? ($quantity * (float)($item['product']['precio'] ?? 0))), 2, '.', ',');
-            $shortName = $this->truncateText($productName, 40);
 
-            $streamLines[] = 'BT';
-            $streamLines[] = '/F1 9 Tf';
-            $streamLines[] = '45 ' . $y . ' Td';
-            $streamLines[] = '(' . $this->escapePdfString($shortName) . ') Tj';
-            $streamLines[] = '265 0 Td';
-            $streamLines[] = '(' . $this->escapePdfString((string)$quantity) . ') Tj';
-            $streamLines[] = '65 0 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Bs. ' . $unitPrice) . ') Tj';
-            $streamLines[] = '85 0 Td';
-            $streamLines[] = '(' . $this->escapePdfString('Bs. ' . $subtotal) . ') Tj';
-            $streamLines[] = 'ET';
-
-            $streamLines[] = '0.3 w';
-            $streamLines[] = '40 ' . ($y - 6) . ' m';
-            $streamLines[] = '555 ' . ($y - 6) . ' l';
-            $streamLines[] = 'S';
-
-            $y -= 20;
+            $rowsHtml .= '<tr>'
+                . '<td>' . $this->e($productName) . '</td>'
+                . '<td class="text-center">' . $quantity . '</td>'
+                . '<td class="text-right">Bs. ' . $unitPrice . '</td>'
+                . '<td class="text-right">Bs. ' . $subtotal . '</td>'
+                . '</tr>';
         }
 
-        // Total final
-        $streamLines[] = 'BT';
-        $streamLines[] = '/F1 12 Tf';
-        $streamLines[] = '380 ' . ($y - 18) . ' Td';
-        $streamLines[] = '(' . $this->escapePdfString('TOTAL: Bs. ' . number_format($total, 2, '.', ',')) . ') Tj';
-        $streamLines[] = 'ET';
+        $logoHtml = $this->buildBrandLogoHtml();
 
-        // Pie simple
-        $streamLines[] = 'BT';
-        $streamLines[] = '/F1 9 Tf';
-        $streamLines[] = '40 60 Td';
-        $streamLines[] = '(' . $this->escapePdfString('Gracias por su compra.') . ') Tj';
-        $streamLines[] = '0 -12 Td';
-        $streamLines[] = '(' . $this->escapePdfString('Este documento es un comprobante de venta generado por el sistema.') . ') Tj';
-        $streamLines[] = 'ET';
+        return '<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <style>
+        @page { margin: 24px; }
+        body { font-family: DejaVu Sans, sans-serif; color: #1d1d1f; font-size: 12px; }
+        .header { width: 100%; margin-bottom: 18px; }
+        .header td { vertical-align: middle; }
+        .logo-wrap { width: 170px; }
+        .logo-wrap svg { display: block; width: 170px; height: 44px; }
+        .brand { text-align: right; }
+        .brand h1 { margin: 0; font-size: 22px; color: #1f4f46; }
+        .brand p { margin: 2px 0 0; font-size: 11px; color: #666; }
+        .box { border: 1px solid #d9d9d9; border-radius: 4px; padding: 10px; margin-bottom: 14px; }
+        .box p { margin: 3px 0; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { background: #1f4f46; color: #fff; padding: 8px; font-size: 11px; text-align: left; }
+        .table td { border-bottom: 1px solid #ececec; padding: 8px; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .total { margin-top: 12px; text-align: right; font-size: 15px; font-weight: 700; color: #1f4f46; }
+        .footer { margin-top: 18px; font-size: 10px; color: #777; text-align: center; }
+    </style>
+</head>
+<body>
+    <table class="header">
+        <tr>
+            <td>' . $logoHtml . '</td>
+            <td class="brand">
+                <h1>Tienda Amiga</h1>
+                <p>Factura / Recibo de Venta</p>
+                <p>Nro Venta: ' . $nroVenta . '</p>
+                <p>Fecha: ' . $this->e($date) . '</p>
+            </td>
+        </tr>
+    </table>
 
-        $stream = implode("\n", $streamLines);
+    <div class="box">
+        <p><strong>Cliente:</strong> ' . $this->e($customerName) . '</p>
+        <p><strong>CI:</strong> ' . $this->e((string)($cliente['ciCliente'] ?? '')) . '</p>
+        <p><strong>Correo:</strong> ' . $this->e((string)($cliente['correo'] ?? '')) . '</p>
+        <p><strong>Telefono:</strong> ' . $this->e((string)($cliente['nroCelular'] ?? '')) . '</p>
+        <p><strong>Direccion:</strong> ' . $this->e((string)($cliente['direccion'] ?? '')) . '</p>
+    </div>
 
-        $objects = [];
-        $objects[1] = "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n";
-        $objects[2] = "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n";
-        $pageResources = '<< /Font << /F1 5 0 R >>';
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th class="text-center">Cant.</th>
+                <th class="text-right">P. Unit</th>
+                <th class="text-right">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>' . $rowsHtml . '</tbody>
+    </table>
 
-        if ($hasLogo) {
-            $pageResources .= ' /XObject << /Im1 6 0 R >>';
-        }
-
-        $pageResources .= ' >>';
-        $objects[3] = "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources " . $pageResources . " >>\nendobj\n";
-        $objects[4] = "4 0 obj\n<< /Length " . strlen($stream) . " >>\nstream\n" . $stream . "endstream\nendobj\n";
-        $objects[5] = "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n";
-
-        if ($hasLogo) {
-            $objects[6] = $logoObject;
-        }
-
-        $pdf = "%PDF-1.4\n";
-        $offsets = [];
-        $position = strlen($pdf);
-
-        foreach ($objects as $object) {
-            $offsets[] = $position;
-            $pdf .= $object;
-            $position += strlen($object);
-        }
-
-        $xref = "xref\n";
-        $xref .= "0 " . (count($objects) + 1) . "\n";
-        $xref .= "0000000000 65535 f \r\n";
-
-        foreach ($offsets as $offset) {
-            $xref .= sprintf("%010d 00000 n \r\n", $offset);
-        }
-
-        $xrefOffset = $position;
-
-        $trailer  = "trailer\n";
-        $trailer .= "<< /Size " . (count($objects) + 1) . " /Root 1 0 R >>\n";
-        $trailer .= "startxref\n";
-        $trailer .= $xrefOffset . "\n";
-        $trailer .= "%%EOF\n";
-
-        return $pdf . $xref . $trailer;
+    <div class="total">TOTAL: Bs. ' . number_format($total, 2, '.', ',') . '</div>
+    <div class="footer">Gracias por su compra. Comprobante generado por Tienda Amiga.</div>
+</body>
+</html>';
     }
 
-    private function buildPdfLogoImageObject(string $logoPath): ?string
+    private function buildBrandLogoHtml(): string
     {
-        if (!file_exists($logoPath)) {
-            return null;
-        }
-
-        if (function_exists('imagecreatefrompng') && function_exists('imagejpeg')) {
-            $image = @imagecreatefrompng($logoPath);
-            if ($image !== false) {
-                $width = imagesx($image);
-                $height = imagesy($image);
-
-                ob_start();
-                imagejpeg($image, null, 85);
-                $jpegData = ob_get_clean();
-                imagedestroy($image);
-
-                if ($jpegData !== false && $jpegData !== '') {
-                    $length = strlen($jpegData);
-                    return "6 0 obj\n<< /Type /XObject /Subtype /Image /Width " . $width . " /Height " . $height . " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " . $length . " >>\nstream\n" . $jpegData . "\nendstream\nendobj\n";
-                }
-            }
-        }
-
-        return $this->buildPdfLogoObjectFromPng($logoPath);
+        return '<div class="logo-wrap">'
+            . '<svg viewBox="0 0 360 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Tienda Amiga">'
+            . '<rect x="1" y="1" width="358" height="88" rx="12" fill="#1f4f46"/>'
+            . '<circle cx="42" cy="45" r="20" fill="#f1b84b"/>'
+            . '<path d="M34 45h16M42 37v16" stroke="#1f4f46" stroke-width="4" stroke-linecap="round"/>'
+            . '<text x="74" y="53" font-size="28" font-family="DejaVu Sans, sans-serif" font-weight="700" fill="#ffffff">Tienda Amiga</text>'
+            . '</svg>'
+            . '</div>';
     }
 
-    private function buildPdfLogoObjectFromPng(string $logoPath): ?string
+    private function e(string $value): string
     {
-        $png = file_get_contents($logoPath);
-        if ($png === false || substr($png, 0, 8) !== "\x89PNG\r\n\x1a\n") {
-            return null;
-        }
-
-        $offset = 8;
-        $width = 0;
-        $height = 0;
-        $bitDepth = 0;
-        $colorType = 0;
-        $idatData = '';
-
-        while ($offset + 8 <= strlen($png)) {
-            $lengthData = substr($png, $offset, 4);
-            if ($lengthData === false) {
-                break;
-            }
-
-            $length = unpack('N', $lengthData)[1];
-            $type = substr($png, $offset + 4, 4);
-            $chunkData = substr($png, $offset + 8, $length);
-
-            if ($type === 'IHDR') {
-                $values = unpack('Nwidth/Nheight/CbitDepth/CcolorType/Ccompression/Cfilter/Cinterlace', $chunkData);
-                $width = $values['width'];
-                $height = $values['height'];
-                $bitDepth = $values['bitDepth'];
-                $colorType = $values['colorType'];
-
-                if ($bitDepth !== 8 || $values['compression'] !== 0 || $values['filter'] !== 0 || $values['interlace'] !== 0) {
-                    return null;
-                }
-
-                if (!in_array($colorType, [2, 6], true)) {
-                    return null;
-                }
-            } elseif ($type === 'IDAT') {
-                $idatData .= $chunkData;
-            } elseif ($type === 'IEND') {
-                break;
-            }
-
-            $offset += 12 + $length;
-        }
-
-        if ($width <= 0 || $height <= 0 || $idatData === '') {
-            return null;
-        }
-
-        $decoded = @gzuncompress($idatData);
-        if ($decoded === false) {
-            return null;
-        }
-
-        $bytesPerPixel = $colorType === 6 ? 4 : 3;
-        $rowLength = $bytesPerPixel * $width;
-        $pos = 0;
-        $prevRow = str_repeat("\0", $rowLength);
-        $pixelData = '';
-
-        for ($row = 0; $row < $height; $row++) {
-            if ($pos >= strlen($decoded)) {
-                return null;
-            }
-            $filterType = ord($decoded[$pos]);
-            $pos++;
-            $rowBytes = substr($decoded, $pos, $rowLength);
-            $pos += $rowLength;
-
-            if (strlen($rowBytes) !== $rowLength) {
-                return null;
-            }
-
-            $decodedRow = $this->decodePngFilter($filterType, $rowBytes, $prevRow, $bytesPerPixel);
-            if ($decodedRow === null) {
-                return null;
-            }
-
-            if ($colorType === 6) {
-                $rgbRow = '';
-                for ($i = 0; $i < strlen($decodedRow); $i += 4) {
-                    $red = ord($decodedRow[$i]);
-                    $green = ord($decodedRow[$i + 1]);
-                    $blue = ord($decodedRow[$i + 2]);
-                    $alpha = ord($decodedRow[$i + 3]);
-
-                    $alphaRatio = $alpha / 255;
-                    $red = (int)round($red * $alphaRatio + 255 * (1 - $alphaRatio));
-                    $green = (int)round($green * $alphaRatio + 255 * (1 - $alphaRatio));
-                    $blue = (int)round($blue * $alphaRatio + 255 * (1 - $alphaRatio));
-
-                    $rgbRow .= chr($red) . chr($green) . chr($blue);
-                }
-                $pixelData .= chr(0) . $rgbRow;
-                $prevRow = $decodedRow;
-            } else {
-                $pixelData .= chr(0) . $decodedRow;
-                $prevRow = $decodedRow;
-            }
-        }
-
-        $compressed = gzcompress($pixelData);
-        $length = strlen($compressed);
-
-        return "6 0 obj\n<< /Type /XObject /Subtype /Image /Width " . $width . " /Height " . $height . " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /DecodeParms << /Predictor 15 /Colors 3 /BitsPerComponent 8 /Columns " . $width . " >> /Length " . $length . " >>\nstream\n" . $compressed . "\nendstream\nendobj\n";
-    }
-
-    private function decodePngFilter(int $filterType, string $rowBytes, string $prevRow, int $bytesPerPixel): ?string
-    {
-        $length = strlen($rowBytes);
-        $result = '';
-
-        if ($filterType === 0) {
-            return $rowBytes;
-        }
-
-        for ($i = 0; $i < $length; $i++) {
-            $x = ord($rowBytes[$i]);
-            $a = $i >= $bytesPerPixel ? ord($result[$i - $bytesPerPixel]) : 0;
-            $b = ord($prevRow[$i]);
-            $c = $i >= $bytesPerPixel ? ord($prevRow[$i - $bytesPerPixel]) : 0;
-
-            switch ($filterType) {
-                case 1:
-                    $value = ($x + $a) & 0xFF;
-                    break;
-                case 2:
-                    $value = ($x + $b) & 0xFF;
-                    break;
-                case 3:
-                    $value = ($x + floor(($a + $b) / 2)) & 0xFF;
-                    break;
-                case 4:
-                    $p = $a + $b - $c;
-                    $pa = abs($p - $a);
-                    $pb = abs($p - $b);
-                    $pc = abs($p - $c);
-                    if ($pa <= $pb && $pa <= $pc) {
-                        $pr = $a;
-                    } elseif ($pb <= $pc) {
-                        $pr = $b;
-                    } else {
-                        $pr = $c;
-                    }
-                    $value = ($x + $pr) & 0xFF;
-                    break;
-                default:
-                    return null;
-            }
-
-            $result .= chr($value);
-        }
-
-        return $result;
-    }
-
-    private function truncateText(string $text, int $maxChars): string
-    {
-        if ($maxChars <= 0) {
-            return '';
-        }
-
-        if (function_exists('mb_strlen') && function_exists('mb_substr')) {
-            if (mb_strlen($text) <= $maxChars) {
-                return $text;
-            }
-            return rtrim(mb_substr($text, 0, max(1, $maxChars - 3))) . '...';
-        }
-
-        if (strlen($text) <= $maxChars) {
-            return $text;
-        }
-
-        return rtrim(substr($text, 0, max(1, $maxChars - 3))) . '...';
-    }
-
-    private function escapePdfString(string $text): string
-    {
-        $text = $this->normalizeTextForPdf($text);
-        return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], $text);
-    }
-
-    private function normalizeTextForPdf(string $text): string
-    {
-        $replacements = [
-            'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u',
-            'Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ú' => 'U',
-            'ñ' => 'n', 'Ñ' => 'N', 'ü' => 'u', 'Ü' => 'U'
-        ];
-
-        $text = strtr($text, $replacements);
-        $converted = iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $text);
-        return $converted !== false ? $converted : $text;
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
 
     public function all(): array
